@@ -102,11 +102,11 @@ async def team(ctx):
     """チームに関するルール設定/変更
     """
     if ctx.invoked_subcommand is None:
-        await ctx.send('チーム分けのルールを以下から指定してください\n{win_percentage, random, fixed}')
+        await ctx.send('チーム分けのルールを以下から指定してください\n{ranking, random, fixed}')
 
 
-@team.command(name='win_percentage')
-async def win_percentage_team(ctx):
+@team.command(name='ranking')
+async def ranking_team(ctx):
     """チーム -> 勝率
     """
     manager.set_team_option('-w')
