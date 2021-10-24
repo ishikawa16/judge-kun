@@ -1,36 +1,25 @@
-# discordpy-startup
+# ジャッジくん
+This is a Discord BOT for private battles of Splatoon.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+## Usage
+Add BOT to servers from [here](https://discord.com/api/oauth2/authorize?client_id=802950542895874078&permissions=0&scope=bot).
 
-- Herokuでdiscord.pyを始めるテンプレートです。
-- Use Template からご利用ください。
-- 使い方はこちら： [Discord Bot 最速チュートリアル【Python&Heroku&GitHub】 - Qiita](https://qiita.com/1ntegrale9/items/aa4b373e8895273875a8)
-
-## 各種ファイル情報
-
-### discordbot.py
-PythonによるDiscordBotのアプリケーションファイルです。
-
-### requirements.txt
-使用しているPythonのライブラリ情報の設定ファイルです。
-
-### Procfile
-Herokuでのプロセス実行コマンドの設定ファイルです。
-
-### runtime.txt
-Herokuでの実行環境の設定ファイルです。
-
-### app.json
-Herokuデプロイボタンの設定ファイルです。
-
-### .github/workflows/flake8.yaml
-GitHub Actions による自動構文チェックの設定ファイルです。
-
-### .gitignore
-Git管理が不要なファイル/ディレクトリの設定ファイルです。
-
-### LICENSE
-このリポジトリのコードの権利情報です。MITライセンスの範囲でご自由にご利用ください。
-
-### README.md
-このドキュメントです。
+## Commands
+* add　[player]: プレイヤーの追加
+* delete [player]: プレイヤーの削除
+* show
+  * player: プレイヤーの一覧表示
+  * ranking: プレイヤーの勝率表示
+  * rule: ルールの表示
+* set
+  * team ranking: チーム -> 勝率
+  * team random: チーム -> ランダム
+  * team fixed: チーム -> 固定
+  * weapon all: 武器 -> 指定なし
+  * weapon random: 武器 -> ランダム
+* split: 試合のチーム分け
+* change [player]: プレイヤーの武器変更
+* report
+  * alpha: アルファチームの勝利報告
+  * bravo: ブラボーチームの勝利報告
+* help: コマンドの一覧表示
