@@ -62,10 +62,10 @@ async def show(ctx):
     """プレイヤー/ルールの表示
     """
     if ctx.invoked_subcommand is None:
-        await ctx.send('表示するものを以下から指定してください\n{player, ranking, rule}')
+        await ctx.send('表示するものを以下から指定してください\n{p(player), w(ranking), r(rule)}')
 
 
-@show.command()
+@show.command(name='p')
 async def player(ctx):
     """プレイヤーの一覧表示
     """
@@ -73,7 +73,7 @@ async def player(ctx):
     await ctx.send(msg)
 
 
-@show.command()
+@show.command(name='w')
 async def ranking(ctx):
     """プレイヤーの勝率表示
     """
@@ -81,7 +81,7 @@ async def ranking(ctx):
     await ctx.send(msg)
 
 
-@show.command()
+@show.command(name='r')
 async def rule(ctx):
     """ルールの表示
     """
@@ -94,18 +94,18 @@ async def set_(ctx):
     """ルールの設定/変更
     """
     if ctx.invoked_subcommand is None:
-        await ctx.send('以下のいずれかを指定してください\n{team, weapon}')
+        await ctx.send('以下のいずれかを指定してください\n{t(team), w(weapon)}')
 
 
-@set_.group()
+@set_.group(name='t')
 async def team(ctx):
     """チームに関するルール設定/変更
     """
     if ctx.invoked_subcommand is None:
-        await ctx.send('チーム分けのルールを以下から指定してください\n{ranking, random, fixed}')
+        await ctx.send('チーム分けのルールを以下から指定してください\n{w(ranking), r(random), f(fixed)}')
 
 
-@team.command(name='ranking')
+@team.command(name='w')
 async def ranking_team(ctx):
     """チーム -> 勝率
     """
@@ -114,7 +114,7 @@ async def ranking_team(ctx):
     await ctx.send(msg)
 
 
-@team.command(name='random')
+@team.command(name='r')
 async def random_team(ctx):
     """チーム -> ランダム
     """
@@ -123,7 +123,7 @@ async def random_team(ctx):
     await ctx.send(msg)
 
 
-@team.command(name='fixed')
+@team.command(name='f')
 async def fixed_team(ctx):
     """チーム -> 固定
     """
@@ -135,15 +135,15 @@ async def fixed_team(ctx):
     await ctx.send(msg)
 
 
-@set_.group()
+@set_.group(name='w')
 async def weapon(ctx):
     """武器に関するルール設定/変更
     """
     if ctx.invoked_subcommand is None:
-        await ctx.send('武器決めのルールを以下から指定してください\n{all, random}')
+        await ctx.send('武器決めのルールを以下から指定してください\n{a(all), r(random)}')
 
 
-@weapon.command(name='all')
+@weapon.command(name='a')
 async def all_weapon(ctx):
     """武器 -> 指定なし
     """
@@ -152,7 +152,7 @@ async def all_weapon(ctx):
     await ctx.send(msg)
 
 
-@weapon.command(name='random')
+@weapon.command(name='r')
 async def random_weapon(ctx):
     """武器 -> ランダム
     """
