@@ -89,15 +89,15 @@ async def rule(ctx):
     await ctx.send(msg)
 
 
-@bot.group(name='set')
-async def set_(ctx):
+@bot.group()
+async def set(ctx):
     """ルールの設定/変更
     """
     if ctx.invoked_subcommand is None:
         await ctx.send('以下のいずれかを指定してください\n{t(team), w(weapon)}')
 
 
-@set_.group(name='t')
+@set.group(name='t')
 async def team(ctx):
     """チームに関するルール設定/変更
     """
@@ -135,7 +135,7 @@ async def fixed_team(ctx):
     await ctx.send(msg)
 
 
-@set_.group(name='w')
+@set.group(name='w')
 async def weapon(ctx):
     """武器に関するルール設定/変更
     """
