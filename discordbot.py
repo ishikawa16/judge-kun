@@ -163,7 +163,7 @@ async def random_weapon(ctx):
 
 @bot.command()
 async def split(ctx):
-    """バトルのチーム分け
+    """試合のチーム分け
     """
     if manager.is_short():
         await ctx.send('プレイヤーの人数が不足しています')
@@ -187,7 +187,7 @@ async def split(ctx):
 
 @bot.command()
 async def change(ctx, *args):
-    """武器の変更
+    """プレイヤーの武器変更
     """
     if not manager.is_during_battle() or not manager.weapon_specified():
         await ctx.send('武器が指定されていません')
@@ -204,7 +204,7 @@ async def change(ctx, *args):
 
 @bot.group()
 async def report(ctx):
-    """バトルの勝利報告
+    """試合の勝利報告
     """
     if ctx.invoked_subcommand is None:
         await ctx.send('勝利チームを指定してください')
