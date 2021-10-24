@@ -210,7 +210,7 @@ async def report(ctx):
         await ctx.send('勝利チームを指定してください')
 
 
-@report.command()
+@report.command(name='a')
 async def alpha(ctx):
     """アルファチームの勝利報告
     """
@@ -223,7 +223,7 @@ async def alpha(ctx):
     await ctx.send('アルファチームの勝利を記録しました')
 
 
-@report.command()
+@report.command(name='b')
 async def bravo(ctx):
     """ブラボーチームの勝利報告
     """
