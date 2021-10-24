@@ -1,4 +1,6 @@
 class Player:
+    """各プレイヤーの情報を管理
+    """
     def __init__(self):
         self.weapon = None
         self.win_count = 0

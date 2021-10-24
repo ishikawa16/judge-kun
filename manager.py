@@ -6,6 +6,8 @@ from player import Player
 
 
 class Manager:
+    """一連の試合の流れを管理
+    """
     def __init__(self):
         self.player_db = dict()
         self.alpha = []

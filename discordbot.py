@@ -9,14 +9,9 @@ manager = Manager()
 
 
 @bot.event
-async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print('------')
-
-
-@bot.event
 async def on_command_error(ctx, error):
+    """コマンドのエラー処理
+    """
     orig_error = getattr(error, "original", error)
     error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
     await ctx.send(error_msg)
@@ -24,6 +19,8 @@ async def on_command_error(ctx, error):
 
 @bot.command()
 async def add(ctx, *args):
+    """プレイヤーの追加
+    """
     if manager.is_during_battle():
         await ctx.send('試合が終了するまでプレイヤーの登録はできません')
         return
@@ -42,6 +39,8 @@ async def add(ctx, *args):
 
 @bot.command()
 async def delete(ctx, *args):
+    """プレイヤーの削除
+    """
     if manager.is_during_battle():
         await ctx.send('試合が終了するまでプレイヤーの削除はできません')
         return
@@ -60,42 +59,56 @@ async def delete(ctx, *args):
 
 @bot.group()
 async def show(ctx):
+    """プレイヤー/ルールの表示
+    """
     if ctx.invoked_subcommand is None:
         await ctx.send('表示するものを以下から指定してください\n{player, ranking, rule}')
 
 
 @show.command()
 async def player(ctx):
+    """プレイヤーの一覧表示
+    """
     msg = manager.display_players()
     await ctx.send(msg)
 
 
 @show.command()
 async def ranking(ctx):
+    """プレイヤーの勝率表示
+    """
     msg = manager.display_ranking()
     await ctx.send(msg)
 
 
 @show.command()
 async def rule(ctx):
+    """ルールの表示
+    """
     msg = manager.display_rule()
     await ctx.send(msg)
 
 
 @bot.group(name='set')
 async def set_(ctx):
+    """ルールの設定/変更
+    """
     if ctx.invoked_subcommand is None:
         await ctx.send('以下のいずれかを指定してください\n{team, weapon}')
 
 
 @set_.group()
 async def team(ctx):
+    """チームに関するルール設定/変更
+    """
     if ctx.invoked_subcommand is None:
         await ctx.send('チーム分けのルールを以下から指定してください\n{win_percentage, random, fixed}')
 
 
 @team.command(name='win_percentage')
 async def win_percentage_team(ctx):
+    """チーム -> 勝率
+    """
     manager.set_team_option('-w')
     msg = manager.display_rule()
     await ctx.send(msg)
@@ -103,6 +116,8 @@ async def win_percentage_team(ctx):
 
 @team.command(name='random')
 async def random_team(ctx):
+    """チーム -> ランダム
+    """
     manager.set_team_option('-r')
     msg = manager.display_rule()
     await ctx.send(msg)
@@ -110,6 +125,8 @@ async def random_team(ctx):
 
 @team.command(name='fixed')
 async def fixed_team(ctx):
+    """チーム -> 固定
+    """
     if manager.is_first_battle():
         await ctx.send('前の試合が存在しません')
         return
@@ -120,12 +137,16 @@ async def fixed_team(ctx):
 
 @set_.group()
 async def weapon(ctx):
+    """武器に関するルール設定/変更
+    """
     if ctx.invoked_subcommand is None:
         await ctx.send('武器決めのルールを以下から指定してください\n{all, random}')
 
 
 @weapon.command(name='all')
 async def all_weapon(ctx):
+    """武器 -> 指定なし
+    """
     manager.set_weapon_option('-a')
     msg = manager.display_rule()
     await ctx.send(msg)
@@ -133,6 +154,8 @@ async def all_weapon(ctx):
 
 @weapon.command(name='random')
 async def random_weapon(ctx):
+    """武器 -> ランダム
+    """
     manager.set_weapon_option('-r')
     msg = manager.display_rule()
     await ctx.send(msg)
@@ -140,6 +163,8 @@ async def random_weapon(ctx):
 
 @bot.command()
 async def split(ctx):
+    """バトルのチーム分け
+    """
     if manager.is_short():
         await ctx.send('プレイヤーの人数が不足しています')
         return
@@ -162,6 +187,8 @@ async def split(ctx):
 
 @bot.command()
 async def change(ctx, *args):
+    """武器の変更
+    """
     if not manager.is_during_battle() or not manager.weapon_specified():
         await ctx.send('武器が指定されていません')
         return
@@ -177,12 +204,16 @@ async def change(ctx, *args):
 
 @bot.group()
 async def report(ctx):
+    """バトルの勝利報告
+    """
     if ctx.invoked_subcommand is None:
         await ctx.send('勝利チームを指定してください')
 
 
 @report.command()
 async def alpha(ctx):
+    """アルファチームの勝利報告
+    """
     if not manager.is_during_battle():
         await ctx.send('試合開始前です')
         return
@@ -194,6 +225,8 @@ async def alpha(ctx):
 
 @report.command()
 async def bravo(ctx):
+    """ブラボーチームの勝利報告
+    """
     if not manager.is_during_battle():
         await ctx.send('試合開始前です')
         return
@@ -201,11 +234,6 @@ async def bravo(ctx):
     manager.report_bravo_win()
     manager.finish_battle()
     await ctx.send('ブラボーチームの勝利を記録しました')
-
-
-@bot.command()
-async def exit(ctx: commands.Context):
-    await bot.close()
 
 
 token = getenv('DISCORD_BOT_TOKEN')
