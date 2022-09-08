@@ -16,8 +16,11 @@ class JudgeCog(commands.Cog, name='プライベートマッチ関連'):
     async def on_command_error(self, ctx, error):
         """コマンドのエラー処理
         """
-        orig_error = getattr(error, "original", error)
-        error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+        if isinstance(error, commands.errors.CommandNotFound):
+            error_msg = '存在しないコマンドです'
+        else:
+            orig_error = getattr(error, "original", error)
+            error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
         await ctx.send(error_msg)
 
     @commands.command()
