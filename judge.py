@@ -9,6 +9,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     """ジャッジくんのコマンドを定義
     """
     def __init__(self, bot):
+        super().__init__()
         self.bot = bot
         self.manager = Manager()
 
