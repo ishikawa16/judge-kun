@@ -28,11 +28,13 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """プレイヤーの追加
         """
         if self.manager.is_during_battle():
-            await ctx.send("試合が終了するまでプレイヤーの登録はできません")
+            msg = "試合が終了するまでプレイヤーの登録はできません"
+            await ctx.send(msg)
             return
 
         if len(args) == 0:
-            await ctx.send("名前を指定してください")
+            msg = "名前を指定してください"
+            await ctx.send(msg)
             return
 
         for name in args:
@@ -47,11 +49,13 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """プレイヤーの削除
         """
         if self.manager.is_during_battle():
-            await ctx.send("試合が終了するまでプレイヤーの削除はできません")
+            msg = "試合が終了するまでプレイヤーの削除はできません"
+            await ctx.send(msg)
             return
 
         if len(args) == 0:
-            await ctx.send("名前を指定してください")
+            msg = "名前を指定してください"
+            await ctx.send(msg)
             return
 
         for name in args:
@@ -66,7 +70,9 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """プレイヤー/ルールの表示
         """
         if ctx.invoked_subcommand is None:
-            await ctx.send("表示するものを以下から指定してください\n{p(player), w(ranking), r(rule)}")
+            msg = ("表示するものを以下から指定してください\n"
+                   "{p(player), w(ranking), r(rule)}")
+            await ctx.send(msg)
 
     @show.command(name="p")
     async def player(self, ctx):
@@ -94,14 +100,18 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """ルールの設定/変更
         """
         if ctx.invoked_subcommand is None:
-            await ctx.send("以下のいずれかを指定してください\n{t(team), w(weapon)}")
+            msg = ("以下のいずれかを指定してください"
+                   "{t(team), w(weapon)}")
+            await ctx.send(msg)
 
     @set.group(name="t")
     async def team(self, ctx):
         """チームに関するルール設定/変更
         """
         if ctx.invoked_subcommand is None:
-            await ctx.send("チーム分けのルールを以下から指定してください\n{w(ranking), r(random), f(fixed)}")
+            msg = ("チーム分けのルールを以下から指定してください\n"
+                   "{w(ranking), r(random), f(fixed)}")
+            await ctx.send(msg)
 
     @team.command(name="w")
     async def ranking_team(self, ctx):
@@ -124,7 +134,8 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """チーム -> 固定
         """
         if self.manager.is_first_battle():
-            await ctx.send("前の試合が存在しません")
+            msg = "前の試合が存在しません"
+            await ctx.send(msg)
             return
         self.manager.set_team_option("-f")
         msg = self.manager.display_rule()
@@ -135,7 +146,9 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """武器に関するルール設定/変更
         """
         if ctx.invoked_subcommand is None:
-            await ctx.send("武器決めのルールを以下から指定してください\n{a(all), r(random)}")
+            msg = ("武器決めのルールを以下から指定してください\n"
+                   "{a(all), r(random)}")
+            await ctx.send(msg)
 
     @weapon.command(name="a")
     async def all_weapon(self, ctx):
@@ -158,15 +171,18 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """試合のチーム分け
         """
         if self.manager.is_short():
-            await ctx.send("プレイヤーの人数が不足しています")
+            msg = "プレイヤーの人数が不足しています"
+            await ctx.send(msg)
             return
 
         if self.manager.is_over():
-            await ctx.send("プレイヤーの人数が制限を超えています")
+            msg = "プレイヤーの人数が制限を超えています"
+            await ctx.send(msg)
             return
 
         if not self.manager.rule_determined():
-            await ctx.send("ルールを指定してください")
+            msg = "ルールを指定してください"
+            await ctx.send(msg)
             return
 
         self.manager.split_players()
@@ -181,11 +197,13 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """プレイヤーの武器変更
         """
         if not self.manager.is_during_battle() or not self.manager.weapon_specified():
-            await ctx.send("武器が指定されていません")
+            msg = "武器が指定されていません"
+            await ctx.send(msg)
             return
 
         if len(args) == 0:
-            await ctx.send("名前を指定してください")
+            msg = "名前を指定してください"
+            await ctx.send(msg)
             return
 
         self.manager.change_weapons(args)
@@ -197,31 +215,36 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """試合の勝利報告
         """
         if ctx.invoked_subcommand is None:
-            await ctx.send("勝利チームを指定してください")
+            msg = "勝利チームを指定してください"
+            await ctx.send(msg)
 
     @report.command(name="a")
     async def alpha(self, ctx):
         """アルファチームの勝利報告
         """
         if not self.manager.is_during_battle():
-            await ctx.send("試合開始前です")
+            msg = "試合開始前です"
+            await ctx.send(msg)
             return
 
         self.manager.report_alpha_win()
         self.manager.finish_battle()
-        await ctx.send("アルファチームの勝利を記録しました")
+        msg = "アルファチームの勝利を記録しました"
+        await ctx.send(msg)
 
     @report.command(name="b")
     async def bravo(self, ctx):
         """ブラボーチームの勝利報告
         """
         if not self.manager.is_during_battle():
-            await ctx.send("試合開始前です")
+            msg = "試合開始前です"
+            await ctx.send(msg)
             return
 
         self.manager.report_bravo_win()
         self.manager.finish_battle()
-        await ctx.send("ブラボーチームの勝利を記録しました")
+        msg = "ブラボーチームの勝利を記録しました"
+        await ctx.send(msg)
 
 
 async def setup(bot):
