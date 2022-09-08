@@ -53,10 +53,10 @@ class Manager:
         self.weapon_option = option
 
     def display_players(self):
-        msg = ''
-        msg += '----------Player----------\n'
+        msg = ""
+        msg += "----------Player----------\n"
         for name in self.player_db.keys():
-            msg += f'- {name}\n'
+            msg += f"- {name}\n"
         return msg
 
     def display_ranking(self):
@@ -66,43 +66,44 @@ class Manager:
             key=lambda x: x[1].calculate_wp()
         )
 
-        msg = ''
+        msg = ""
+        msg += "----------Player----------\n"
         for name, player in sorted_players:
             if player.is_rankable():
                 wp = player.calculate_wp()
-                msg += f'- {name} ({wp*100:.1f}%)\n'
+                msg += f"- {name} ({wp*100:.1f}%)\n"
             else:
-                msg += f'- {name} ( - )\n'
+                msg += f"- {name} ( - )\n"
         return msg
 
     def display_teams(self):
-        msg = ''
-        msg += '----------Alpha Team----------\n'
+        msg = ""
+        msg += "----------Alpha Team----------\n"
         for name in self.alpha:
-            if self.weapon_option == '-a':
-                msg += f'- {name}\n'
+            if self.weapon_option == "-a":
+                msg += f"- {name}\n"
             else:
-                msg += f'- {name} ({self.player_db[name].get_weapon()})\n'
-        msg += '----------Bravo Team----------\n'
+                msg += f"- {name} ({self.player_db[name].get_weapon()})\n"
+        msg += "----------Bravo Team----------\n"
         for name in self.bravo:
-            if self.weapon_option == '-a':
-                msg += f'- {name}\n'
+            if self.weapon_option == "-a":
+                msg += f"- {name}\n"
             else:
-                msg += f'- {name} ({self.player_db[name].get_weapon()})\n'
+                msg += f"- {name} ({self.player_db[name].get_weapon()})\n"
         return msg
 
     def display_rule(self):
-        option2rule = {'-a': '指定なし', '-f': '固定', '-r': 'ランダム', '-w': '勝率', None: ' - '}
-        msg = ''
-        msg += '----------ルール----------\n'
-        msg += f'チーム分け:{option2rule[self.team_option]}, 武器:{option2rule[self.weapon_option]}\n'
+        option2rule = {"-a": "指定なし", "-f": "固定", "-r": "ランダム", "-w": "勝率", None: " - "}
+        msg = ""
+        msg += "----------ルール----------\n"
+        msg += f"チーム分け:{option2rule[self.team_option]}, 武器:{option2rule[self.weapon_option]}\n"
         return msg
 
     def split_players(self):
         name_list = list(self.player_db.keys())
 
-        if self.team_option == '-w':
-            diff = float('inf')
+        if self.team_option == "-w":
+            diff = float("inf")
             for comb in combinations(name_list, len(self.player_db) // 2):
                 alpha_wp, bravo_wp = 0, 0
                 for name, player in self.player_db.items():
@@ -116,19 +117,19 @@ class Manager:
                     diff = abs(alpha_wp - bravo_wp)
                     self.alpha, self.bravo = comb, tuple(set(name_list) - set(comb))
 
-        elif self.team_option == '-r':
+        elif self.team_option == "-r":
             comb = random.sample(name_list, len(self.player_db) // 2)
             self.alpha, self.bravo = comb, list(set(name_list) - set(comb))
 
     def specify_weapons(self):
         for player in self.player_db.values():
-            if self.weapon_option == '-a':
+            if self.weapon_option == "-a":
                 player.set_weapon(None)
             else:
                 player.set_weapon(random.choice(WEAPON_LIST))
 
     def weapon_specified(self):
-        return self.weapon_option == '-r'
+        return self.weapon_option == "-r"
 
     def change_weapons(self, names):
         for name in names:

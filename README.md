@@ -8,18 +8,18 @@ Add BOT to servers from [here](https://discord.com/api/oauth2/authorize?client_i
 * add　[player]: プレイヤーの追加
 * delete [player]: プレイヤーの削除
 * show
-  * player: プレイヤーの一覧表示
-  * ranking: プレイヤーの勝率表示
-  * rule: ルールの表示
+  * p: プレイヤーの一覧表示
+  * w: プレイヤーの勝率表示
+  * r: ルールの表示
 * set
-  * team ranking: チーム -> 勝率
-  * team random: チーム -> ランダム
-  * team fixed: チーム -> 固定
-  * weapon all: 武器 -> 指定なし
-  * weapon random: 武器 -> ランダム
+  * t w: チーム -> 勝率
+  * t r: チーム -> ランダム
+  * t f: チーム -> 固定
+  * w a: 武器 -> 指定なし
+  * w r: 武器 -> ランダム
 * split: 試合のチーム分け
 * change [player]: プレイヤーの武器変更
 * report
-  * alpha: アルファチームの勝利報告
-  * bravo: ブラボーチームの勝利報告
+  * a: アルファチームの勝利報告
+  * b: ブラボーチームの勝利報告
 * help: コマンドの一覧表示
