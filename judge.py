@@ -13,17 +13,6 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         self.bot = bot
         self.manager = Manager()
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        """コマンドのエラー処理
-        """
-        if isinstance(error, commands.errors.CommandNotFound):
-            error_msg = "存在しないコマンドです"
-        else:
-            orig_error = getattr(error, "original", error)
-            error_msg = "".join(traceback.TracebackException.from_exception(orig_error).format())
-        await ctx.send(error_msg)
-
     @commands.command()
     async def add(self, ctx, *args):
         """プレイヤーの追加
@@ -246,6 +235,17 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
 
         msg = self.manager.display_teams()
         await ctx.send(msg)
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        """コマンドのエラー処理
+        """
+        if isinstance(error, commands.errors.CommandNotFound):
+            error_msg = "存在しないコマンドです"
+        else:
+            orig_error = getattr(error, "original", error)
+            error_msg = "".join(traceback.TracebackException.from_exception(orig_error).format())
+        await ctx.send(error_msg)
 
 
 async def setup(bot):
