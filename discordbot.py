@@ -1,10 +1,13 @@
-from discord.ext import commands
 from os import getenv
 import traceback
 
+import discord
+from discord.ext import commands
+
 from manager import Manager
 
-bot = commands.Bot(command_prefix='/')
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix='/', intents=intents)
 manager = Manager()
 
 
