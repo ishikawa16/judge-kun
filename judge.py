@@ -5,7 +5,7 @@ from discord.ext import commands
 from manager import Manager
 
 
-class JudgeCog(commands.Cog):
+class JudgeCog(commands.Cog, name='プライベートマッチ関連'):
     """ジャッジくんのコマンドを定義
     """
     def __init__(self, bot):

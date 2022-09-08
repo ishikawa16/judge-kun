@@ -4,12 +4,23 @@ import os
 import discord
 from discord.ext import commands
 
+from help import JapaneseHelpCommand
+
+
+PREFIX = '/'
+TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+
 
 async def main():
-    bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
-    token = os.getenv('DISCORD_BOT_TOKEN')
+    help_command = JapaneseHelpCommand(prefix=PREFIX)
+    intents = discord.Intents.all()
+    bot = commands.Bot(
+        command_prefix=PREFIX,
+        help_command=help_command,
+        intents=intents)
+
     await bot.load_extension('judge')
-    await bot.start(token=token)
+    await bot.start(token=TOKEN)
 
 
 if __name__ == '__main__':
