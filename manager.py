@@ -67,6 +67,7 @@ class Manager:
         )
 
         msg = ""
+        msg += "----------Player----------\n"
         for name, player in sorted_players:
             if player.is_rankable():
                 wp = player.calculate_wp()
