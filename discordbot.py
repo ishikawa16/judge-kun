@@ -18,8 +18,9 @@ async def main():
         command_prefix=PREFIX,
         help_command=help_command,
         intents=intents)
+    cog = "judge"
 
-    await bot.load_extension("judge")
+    await bot.load_extension(cog)
     await bot.start(token=TOKEN)
 
 
