@@ -109,6 +109,15 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         msg = "ブラボーチームの勝利を記録しました"
         await ctx.send(msg)
 
+    @commands.command()
+    async def reset(self, ctx):
+        """記録のリセット
+        """
+        del self.manager
+        self.manager = Manager()
+        msg = "記録した情報を全てリセットしました"
+        await ctx.send(msg)
+
     @commands.group()
     async def set(self, ctx):
         """ルールの設定/変更
