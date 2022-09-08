@@ -7,8 +7,8 @@ from discord.ext import commands
 from help import JapaneseHelpCommand
 
 
-PREFIX = '/'
-TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+PREFIX = "/"
+TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 
 async def main():
@@ -19,9 +19,9 @@ async def main():
         help_command=help_command,
         intents=intents)
 
-    await bot.load_extension('judge')
+    await bot.load_extension("judge")
     await bot.start(token=TOKEN)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
