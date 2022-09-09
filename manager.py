@@ -55,8 +55,11 @@ class Manager:
     def display_players(self):
         msg = ""
         msg += "----------Player----------\n"
-        for name in self.player_db.keys():
-            msg += f"- {name}\n"
+        for name, player in self.player_db.items():
+            if player.is_active():
+                msg += f"- __{name}__\n"
+            else:
+                msg += f"- {name}\n"
         return msg
 
     def display_ranking(self):
@@ -71,9 +74,16 @@ class Manager:
         for name, player in sorted_players:
             if player.is_rankable():
                 wp = player.calculate_wp()
-                msg += f"- {name} ({wp*100:.1f}%)\n"
+                if player.is_active():
+                    msg += f"- __{name}__ ({wp*100:.1f}%)\n"
+                else:
+                    msg += f"- {name} ({wp*100:.1f}%)\n"
             else:
                 msg += f"- {name} ( - )\n"
+                if player.is_active():
+                    msg += f"- __{name}__ ( - )\n"
+                else:
+                    msg += f"- {name} ( - )\n"
         return msg
 
     def display_teams(self):
@@ -147,3 +157,9 @@ class Manager:
             self.player_db[name].lose()
         for name in self.bravo:
             self.player_db[name].win()
+
+    def change_status(self, name):
+        if self.player_db[name].is_active():
+            self.player_db[name].deactivate()
+        else:
+            self.player_db[name].activate()

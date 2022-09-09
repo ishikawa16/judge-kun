@@ -2,9 +2,19 @@ class Player:
     """各プレイヤーの情報を管理
     """
     def __init__(self):
+        self.status = True
         self.weapon = None
         self.win_count = 0
         self.match_count = 0
+
+    def is_active(self):
+        return self.status
+
+    def activate(self):
+        self.status = True
+
+    def deactivate(self):
+        self.status = False
 
     def get_weapon(self):
         return self.weapon
