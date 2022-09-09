@@ -141,10 +141,8 @@ class Manager:
     def weapon_specified(self):
         return self.weapon_option == "-r"
 
-    def change_weapons(self, names):
-        for name in names:
-            if name in self.player_db:
-                self.player_db[name].set_weapon(random.choice(WEAPON_LIST))
+    def change_weapon(self, name):
+        self.player_db[name].set_weapon(random.choice(WEAPON_LIST))
 
     def report_alpha_win(self):
         for name in self.alpha:

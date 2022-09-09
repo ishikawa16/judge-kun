@@ -48,7 +48,10 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        self.manager.change_weapons(args)
+        for name in args:
+            if self.manager.has_player(name):
+                self.manager.change_weapon(name)
+
         msg = self.manager.display_teams()
         await ctx.send(msg)
 
