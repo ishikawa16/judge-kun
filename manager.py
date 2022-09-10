@@ -25,11 +25,16 @@ class Manager:
     def has_player(self, name):
         return name in self.player_db
 
+    def get_active_player_db(self):
+        return {name: player for name, player in self.player_db.items() if player.is_active()}
+
     def is_short(self):
-        return len(self.player_db) < 2
+        active_player_db = self.get_active_player_db()
+        return len(active_player_db) < 2
 
     def is_over(self):
-        return len(self.player_db) > 8
+        active_player_db = self.get_active_player_db()
+        return len(active_player_db) > 8
 
     def start_battle(self):
         self.battle_flag = True
@@ -55,8 +60,11 @@ class Manager:
     def display_players(self):
         msg = ""
         msg += "----------Player----------\n"
-        for name in self.player_db.keys():
-            msg += f"- {name}\n"
+        for name, player in self.player_db.items():
+            if player.is_active():
+                msg += f"- __{name}__\n"
+            else:
+                msg += f"- {name}\n"
         return msg
 
     def display_ranking(self):
@@ -71,9 +79,15 @@ class Manager:
         for name, player in sorted_players:
             if player.is_rankable():
                 wp = player.calculate_wp()
-                msg += f"- {name} ({wp*100:.1f}%)\n"
+                if player.is_active():
+                    msg += f"- __{name}__ ({wp*100:.1f}%)\n"
+                else:
+                    msg += f"- {name} ({wp*100:.1f}%)\n"
             else:
-                msg += f"- {name} ( - )\n"
+                if player.is_active():
+                    msg += f"- __{name}__ ( - )\n"
+                else:
+                    msg += f"- {name} ( - )\n"
         return msg
 
     def display_teams(self):
@@ -100,11 +114,12 @@ class Manager:
         return msg
 
     def split_players(self):
-        name_list = list(self.player_db.keys())
+        active_player_db = self.get_active_player_db()
+        active_player_names = list(active_player_db.keys())
 
         if self.team_option == "-w":
             diff = float("inf")
-            for comb in combinations(name_list, len(self.player_db) // 2):
+            for comb in combinations(active_player_names, len(active_player_names) // 2):
                 alpha_wp, bravo_wp = 0, 0
                 for name, player in self.player_db.items():
                     wp = player.calculate_wp()
@@ -115,14 +130,16 @@ class Manager:
 
                 if abs(alpha_wp - bravo_wp) < diff:
                     diff = abs(alpha_wp - bravo_wp)
-                    self.alpha, self.bravo = comb, tuple(set(name_list) - set(comb))
+                    self.alpha, self.bravo = comb, tuple(set(active_player_names) - set(comb))
 
         elif self.team_option == "-r":
-            comb = random.sample(name_list, len(self.player_db) // 2)
-            self.alpha, self.bravo = comb, list(set(name_list) - set(comb))
+            comb = random.sample(active_player_names, len(active_player_names) // 2)
+            self.alpha, self.bravo = comb, list(set(active_player_names) - set(comb))
 
     def specify_weapons(self):
-        for player in self.player_db.values():
+        active_player_db = self.get_active_player_db()
+
+        for player in active_player_db.values():
             if self.weapon_option == "-a":
                 player.set_weapon(None)
             else:
@@ -131,10 +148,9 @@ class Manager:
     def weapon_specified(self):
         return self.weapon_option == "-r"
 
-    def change_weapons(self, names):
-        for name in names:
-            if name in self.player_db:
-                self.player_db[name].set_weapon(random.choice(WEAPON_LIST))
+    def change_weapon(self, name):
+        if self.player_db[name].is_active():
+            self.player_db[name].set_weapon(random.choice(WEAPON_LIST))
 
     def report_alpha_win(self):
         for name in self.alpha:
@@ -147,3 +163,9 @@ class Manager:
             self.player_db[name].lose()
         for name in self.bravo:
             self.player_db[name].win()
+
+    def change_status(self, name):
+        if self.player_db[name].is_active():
+            self.player_db[name].deactivate()
+        else:
+            self.player_db[name].activate()

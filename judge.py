@@ -48,7 +48,10 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        self.manager.change_weapons(args)
+        for name in args:
+            if self.manager.has_player(name):
+                self.manager.change_weapon(name)
+
         msg = self.manager.display_teams()
         await ctx.send(msg)
 
@@ -243,6 +246,27 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         self.manager.start_battle()
 
         msg = self.manager.display_teams()
+        await ctx.send(msg)
+
+    @commands.command()
+    async def switch(self, ctx, *args):
+        """プレイヤーの状態切り替え
+        """
+        if self.manager.is_during_battle():
+            msg = "試合が終了するまでプレイヤーの状態の切り替えはできません"
+            await ctx.send(msg)
+            return
+
+        if len(args) == 0:
+            msg = "名前を指定してください"
+            await ctx.send(msg)
+            return
+
+        for name in args:
+            if self.manager.has_player(name):
+                self.manager.change_status(name)
+
+        msg = self.manager.display_players()
         await ctx.send(msg)
 
     @commands.Cog.listener()
