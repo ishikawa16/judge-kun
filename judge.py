@@ -17,11 +17,6 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def add(self, ctx, *args):
         """プレイヤーの追加
         """
-        if self.manager.is_during_battle():
-            msg = "試合が終了するまでプレイヤーの登録はできません"
-            await ctx.send(msg)
-            return
-
         if len(args) == 0:
             msg = "名前を指定してください"
             await ctx.send(msg)
@@ -38,19 +33,21 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def change(self, ctx, *args):
         """プレイヤーの武器変更
         """
-        if not self.manager.is_during_battle() or not self.manager.weapon_specified():
-            msg = "武器が指定されていません"
-            await ctx.send(msg)
-            return
-
         if len(args) == 0:
             msg = "名前を指定してください"
             await ctx.send(msg)
             return
 
+        battle = self.manager.get_prepared_battle()
+        if battle is None or not self.manager.weapon_specified():
+            msg = "武器が指定されていません"
+            await ctx.send(msg)
+            return
+
         for name in args:
-            if self.manager.has_player(name):
-                self.manager.change_weapon(name)
+            names = battle.get_players()
+            if name in names:
+                battle.change_weapon(name)
 
         msg = self.manager.display_teams()
         await ctx.send(msg)
@@ -59,11 +56,6 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def delete(self, ctx, *args):
         """プレイヤーの削除
         """
-        if self.manager.is_during_battle():
-            msg = "試合が終了するまでプレイヤーの削除はできません"
-            await ctx.send(msg)
-            return
-
         if len(args) == 0:
             msg = "名前を指定してください"
             await ctx.send(msg)
@@ -84,32 +76,32 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             msg = "勝利チームを指定してください"
             await ctx.send(msg)
 
-    @report.command(name="a")
-    async def alpha(self, ctx):
-        """アルファチームの勝利報告
+    @report.command(name="1")
+    async def team1(self, ctx):
+        """チーム1の勝利報告
         """
-        if not self.manager.is_during_battle():
+        battle = self.manager.get_prepared_battle()
+        if battle is None:
             msg = "試合開始前です"
             await ctx.send(msg)
             return
 
-        self.manager.report_alpha_win()
-        self.manager.finish_battle()
-        msg = "アルファチームの勝利を記録しました"
+        self.manager.record_battle(1)
+        msg = "チーム1の勝利を記録しました"
         await ctx.send(msg)
 
-    @report.command(name="b")
+    @report.command(name="2")
     async def bravo(self, ctx):
-        """ブラボーチームの勝利報告
+        """チーム2の勝利報告
         """
-        if not self.manager.is_during_battle():
+        battle = self.manager.get_prepared_battle()
+        if battle is None:
             msg = "試合開始前です"
             await ctx.send(msg)
             return
 
-        self.manager.report_bravo_win()
-        self.manager.finish_battle()
-        msg = "ブラボーチームの勝利を記録しました"
+        self.manager.record_battle(2)
+        msg = "チーム2の勝利を記録しました"
         await ctx.send(msg)
 
     @commands.command()
@@ -159,10 +151,12 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def fixed_team(self, ctx):
         """チーム -> 固定
         """
-        if self.manager.is_first_battle():
+        battle = self.manager.get_latest_battle()
+        if battle is None:
             msg = "前の試合が存在しません"
             await ctx.send(msg)
             return
+
         self.manager.set_team_option("-f")
         msg = self.manager.display_rule()
         await ctx.send(msg)
@@ -241,9 +235,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        self.manager.split_players()
-        self.manager.specify_weapons()
-        self.manager.start_battle()
+        self.manager.prepare_battle()
 
         msg = self.manager.display_teams()
         await ctx.send(msg)
@@ -252,11 +244,6 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def switch(self, ctx, *args):
         """プレイヤーの状態切り替え
         """
-        if self.manager.is_during_battle():
-            msg = "試合が終了するまでプレイヤーの状態の切り替えはできません"
-            await ctx.send(msg)
-            return
-
         if len(args) == 0:
             msg = "名前を指定してください"
             await ctx.send(msg)
@@ -264,7 +251,8 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
 
         for name in args:
             if self.manager.has_player(name):
-                self.manager.change_status(name)
+                player = self.get_player(name)
+                player.change_status()
 
         msg = self.manager.display_players()
         await ctx.send(msg)
