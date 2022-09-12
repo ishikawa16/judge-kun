@@ -251,7 +251,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
 
         for name in args:
             if self.manager.has_player(name):
-                player = self.get_player(name)
+                player = self.manager.get_player(name)
                 player.change_status()
 
         msg = self.manager.display_players()
