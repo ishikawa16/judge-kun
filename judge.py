@@ -22,7 +22,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        for name in args:
+        for name in set(args):
             if not self.manager.has_player(name):
                 self.manager.add_player(name)
 
@@ -44,7 +44,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        for name in args:
+        for name in set(args):
             names = battle.get_players()
             if name in names:
                 battle.change_weapon(name)
@@ -61,7 +61,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        for name in args:
+        for name in set(args):
             if self.manager.has_player(name):
                 self.manager.remove_player(name)
 
@@ -249,7 +249,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        for name in args:
+        for name in set(args):
             if self.manager.has_player(name):
                 player = self.manager.get_player(name)
                 player.change_status()
