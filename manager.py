@@ -15,7 +15,7 @@ class Manager:
     def __init__(self):
         self.player_db = dict()
         self.battle_db = deque()
-        self.battle = None
+        self.battle = Battle()
         self.rule = Rule()
 
     # プレイヤー関連の操作
@@ -92,7 +92,8 @@ class Manager:
             battle = self.battle_db[-1]
             team1, team2 = battle.get_team1(), battle.get_team2()
 
-        return team1, team2
+        self.battle.set_team1(team1)
+        self.battle.set_team2(team2)
 
     def is_short(self):
         active_players = self.get_active_players()
@@ -114,10 +115,8 @@ class Manager:
 
     def prepare_battle(self):
         active_players = self.get_active_players()
-        team1, team2 = self.split_players(active_players)
-        player2weapon = self.specify_weapons(active_players)
-        self.battle = Battle(
-            team1=team1, team2=team2, player2weapon=player2weapon)
+        self.split_players(active_players)
+        self.specify_weapons(active_players)
 
     def record_battle(self, winner):
         self.battle.record_winner(winner)
@@ -125,7 +124,7 @@ class Manager:
 
         latest_battle = copy.deepcopy(self.battle)
         self.battle_db.append(latest_battle)
-        self.battle = None
+        self.battle.reset()
 
     def specify_weapons(self, names):
         weapon_option = self.rule.get_weapon_option()
@@ -135,7 +134,7 @@ class Manager:
                 player2weapon[name] = None
             else:
                 player2weapon[name] = random.choice(WEAPON_LIST)
-        return player2weapon
+        self.battle.set_player2weapon(player2weapon)
 
     def calculate_wp(self, winner):
         team1 = self.battle.get_team1()
