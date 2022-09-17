@@ -6,6 +6,7 @@ import random
 from battle import Battle
 from constants import WEAPON_LIST
 from player import Player
+from rule import Rule
 
 
 class Manager:
@@ -15,8 +16,7 @@ class Manager:
         self.player_db = dict()
         self.battle_db = deque()
         self.tmp_battle = None
-        self.team_option = None
-        self.weapon_option = None
+        self.rule = Rule()
 
     # プレイヤー関連の操作
     def has_player(self, name):
@@ -32,7 +32,8 @@ class Manager:
         del self.player_db[name]
 
     def split_players(self, names):
-        if self.team_option == "-w":
+        team_option = self.rule.get_team_option()
+        if team_option == "-w":
             diff = float("inf")
             for comb in combinations(names, len(names) // 2):
                 team1_wp, team2_wp = 0, 0
@@ -47,7 +48,7 @@ class Manager:
                     diff = abs(team1_wp - team2_wp)
                     team1, team2 = comb, tuple(set(names) - set(comb))
 
-        elif self.team_option == "-r":
+        elif team_option == "-r":
             comb = random.sample(names, len(names) // 2)
             team1, team2 = comb, list(set(names) - set(comb))
 
@@ -104,8 +105,9 @@ class Manager:
     # 武器関連の操作
     def specify_weapons(self, names):
         player2weapon = dict()
+        weapon_option = self.rule.get_weapon_option()
         for name in names:
-            if self.weapon_option == "-a":
+            if weapon_option == "-a":
                 player2weapon[name] = None
             else:
                 player2weapon[name] = random.choice(WEAPON_LIST)
@@ -155,38 +157,23 @@ class Manager:
     def display_teams(self):
         team1 = self.tmp_battle.get_team1()
         team2 = self.tmp_battle.get_team2()
+        weapon_option = self.rule.get_weapon_option()
 
         msg = ""
         msg += "----------Team1----------\n"
         for name in team1:
-            if self.weapon_option == "-a":
+            if weapon_option == "-a":
                 msg += f"- {name}\n"
             else:
                 msg += f"- {name} ({self.tmp_battle.get_weapon(name)})\n"
         msg += "----------Team2----------\n"
         for name in team2:
-            if self.weapon_option == "-a":
+            if weapon_option == "-a":
                 msg += f"- {name}\n"
             else:
                 msg += f"- {name} ({self.tmp_battle.get_weapon(name)})\n"
         return msg
 
     # ルール関連の操作
-    def rule_determined(self):
-        return self.team_option and self.weapon_option
-
-    def set_team_option(self, option):
-        self.team_option = option
-
-    def set_weapon_option(self, option):
-        self.weapon_option = option
-
-    def weapon_specified(self):
-        return self.weapon_option == "-r"
-
-    def display_rule(self):
-        option2rule = {"-a": "指定なし", "-f": "固定", "-r": "ランダム", "-w": "勝率", None: " - "}
-        msg = ""
-        msg += "----------ルール----------\n"
-        msg += f"チーム分け:{option2rule[self.team_option]}, 武器:{option2rule[self.weapon_option]}\n"
-        return msg
+    def get_rule(self):
+        return self.rule
