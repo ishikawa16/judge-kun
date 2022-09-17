@@ -21,7 +21,7 @@ class Player:
 
     def get_wp(self):
         if self.match_count == 0:
-            return 0
+            return -1
         return self.win_count / self.match_count
 
     def is_rankable(self):
