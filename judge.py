@@ -138,7 +138,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """
         rule = self.manager.get_rule()
         rule.set_team_option("-w")
-        msg = rule.create_msg()
+        msg = rule.display()
         await ctx.send(msg)
 
     @team.command(name="r")
@@ -147,7 +147,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """
         rule = self.manager.get_rule()
         rule.set_team_option("-r")
-        msg = rule.create_msg()
+        msg = rule.display()
         await ctx.send(msg)
 
     @team.command(name="f")
@@ -162,7 +162,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
 
         rule = self.manager.get_rule()
         rule.set_team_option("-f")
-        msg = rule.create_msg()
+        msg = rule.display()
         await ctx.send(msg)
 
     @set.group(name="w")
@@ -180,7 +180,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """
         rule = self.manager.get_rule()
         rule.set_weapon_option("-a")
-        msg = rule.create_msg()
+        msg = rule.display()
         await ctx.send(msg)
 
     @weapon.command(name="r")
@@ -189,7 +189,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """
         rule = self.manager.get_rule()
         rule.set_weapon_option("-r")
-        msg = rule.create_msg()
+        msg = rule.display()
         await ctx.send(msg)
 
     @commands.group()
@@ -220,7 +220,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
         """ルールの表示
         """
         rule = self.manager.get_rule()
-        msg = rule.create_msg()
+        msg = rule.display()
         await ctx.send(msg)
 
     @commands.command()

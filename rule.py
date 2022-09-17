@@ -7,7 +7,7 @@ class Rule:
         self.team_option = None
         self.weapon_option = None
 
-    def create_msg(self):
+    def display(self):
         msg = ""
         msg += "----------ルール----------\n"
         msg += f"チーム分け:{self.OPTION2CAPTION[self.team_option]}, 武器:{self.OPTION2CAPTION[self.weapon_option]}\n"
