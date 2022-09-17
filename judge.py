@@ -38,8 +38,10 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        battle = self.manager.get_prepared_battle()
-        if battle is None or not self.manager.weapon_specified():
+        battle = self.manager.get_battle()
+        rule = self.manager.get_rule()
+        weapon_option = rule.get_weapon_option()
+        if battle is None or weapon_option != "-r":
             msg = "武器が指定されていません"
             await ctx.send(msg)
             return
@@ -79,7 +81,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def team1(self, ctx):
         """チーム1の勝利報告
         """
-        battle = self.manager.get_prepared_battle()
+        battle = self.manager.get_battle()
         if battle is None:
             msg = "試合開始前です"
             await ctx.send(msg)
@@ -93,7 +95,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def bravo(self, ctx):
         """チーム2の勝利報告
         """
-        battle = self.manager.get_prepared_battle()
+        battle = self.manager.get_battle()
         if battle is None:
             msg = "試合開始前です"
             await ctx.send(msg)
@@ -134,16 +136,18 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def ranking_team(self, ctx):
         """チーム -> 勝率
         """
-        self.manager.set_team_option("-w")
-        msg = self.manager.display_rule()
+        rule = self.manager.get_rule()
+        rule.set_team_option("-w")
+        msg = rule.display()
         await ctx.send(msg)
 
     @team.command(name="r")
     async def random_team(self, ctx):
         """チーム -> ランダム
         """
-        self.manager.set_team_option("-r")
-        msg = self.manager.display_rule()
+        rule = self.manager.get_rule()
+        rule.set_team_option("-r")
+        msg = rule.display()
         await ctx.send(msg)
 
     @team.command(name="f")
@@ -156,8 +160,9 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        self.manager.set_team_option("-f")
-        msg = self.manager.display_rule()
+        rule = self.manager.get_rule()
+        rule.set_team_option("-f")
+        msg = rule.display()
         await ctx.send(msg)
 
     @set.group(name="w")
@@ -173,16 +178,18 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def all_weapon(self, ctx):
         """武器 -> 指定なし
         """
-        self.manager.set_weapon_option("-a")
-        msg = self.manager.display_rule()
+        rule = self.manager.get_rule()
+        rule.set_weapon_option("-a")
+        msg = rule.display()
         await ctx.send(msg)
 
     @weapon.command(name="r")
     async def random_weapon(self, ctx):
         """武器 -> ランダム
         """
-        self.manager.set_weapon_option("-r")
-        msg = self.manager.display_rule()
+        rule = self.manager.get_rule()
+        rule.set_weapon_option("-r")
+        msg = rule.display()
         await ctx.send(msg)
 
     @commands.group()
@@ -212,7 +219,8 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def rule(self, ctx):
         """ルールの表示
         """
-        msg = self.manager.display_rule()
+        rule = self.manager.get_rule()
+        msg = rule.display()
         await ctx.send(msg)
 
     @commands.command()
@@ -229,7 +237,8 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        if not self.manager.rule_determined():
+        rule = self.manager.get_rule()
+        if not rule.is_determined():
             msg = "ルールを指定してください"
             await ctx.send(msg)
             return

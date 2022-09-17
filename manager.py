@@ -6,6 +6,7 @@ import random
 from battle import Battle
 from constants import WEAPON_LIST
 from player import Player
+from rule import Rule
 
 
 class Manager:
@@ -14,59 +15,21 @@ class Manager:
     def __init__(self):
         self.player_db = dict()
         self.battle_db = deque()
-        self.tmp_battle = None
-        self.team_option = None
-        self.weapon_option = None
+        self.battle = None
+        self.rule = Rule()
 
     # プレイヤー関連の操作
-    def has_player(self, name):
-        return name in self.player_db
-
     def get_player(self, name):
         return self.player_db[name]
+
+    def has_player(self, name):
+        return name in self.player_db
 
     def add_player(self, name):
         self.player_db[name] = Player()
 
     def remove_player(self, name):
         del self.player_db[name]
-
-    def split_players(self, names):
-        if self.team_option == "-w":
-            diff = float("inf")
-            for comb in combinations(names, len(names) // 2):
-                team1_wp, team2_wp = 0, 0
-                for name, player in self.player_db.items():
-                    wp = player.get_wp()
-                    if name in comb:
-                        team1_wp += wp
-                    else:
-                        team2_wp += wp
-
-                if abs(team1_wp - team2_wp) < diff:
-                    diff = abs(team1_wp - team2_wp)
-                    team1, team2 = comb, tuple(set(names) - set(comb))
-
-        elif self.team_option == "-r":
-            comb = random.sample(names, len(names) // 2)
-            team1, team2 = comb, list(set(names) - set(comb))
-
-        else:
-            battle = self.battle_db[-1]
-            team1, team2 = battle.get_team1(), battle.get_team2()
-
-        return team1, team2
-
-    def get_active_players(self):
-        return [name for name, player in self.player_db.items() if player.is_active()]
-
-    def is_short(self):
-        active_players = self.get_active_players()
-        return len(active_players) < 2
-
-    def is_over(self):
-        active_players = self.get_active_players()
-        return len(active_players) > 8
 
     def display_players(self):
         msg = ""
@@ -101,34 +64,47 @@ class Manager:
                     msg += f"- {name} ( - )\n"
         return msg
 
-    # 武器関連の操作
-    def specify_weapons(self, names):
-        player2weapon = dict()
-        for name in names:
-            if self.weapon_option == "-a":
-                player2weapon[name] = None
-            else:
-                player2weapon[name] = random.choice(WEAPON_LIST)
-        return player2weapon
+    def get_active_players(self):
+        return [name for name, player in self.player_db.items() if player.is_active()]
+
+    def split_players(self, names):
+        team_option = self.rule.get_team_option()
+        if team_option == "-w":
+            diff = float("inf")
+            for comb in combinations(names, len(names) // 2):
+                team1_wp, team2_wp = 0, 0
+                for name, player in self.player_db.items():
+                    wp = player.get_wp()
+                    if name in comb:
+                        team1_wp += wp
+                    else:
+                        team2_wp += wp
+
+                if abs(team1_wp - team2_wp) < diff:
+                    diff = abs(team1_wp - team2_wp)
+                    team1, team2 = comb, tuple(set(names) - set(comb))
+
+        elif team_option == "-r":
+            comb = random.sample(names, len(names) // 2)
+            team1, team2 = comb, list(set(names) - set(comb))
+
+        else:
+            battle = self.battle_db[-1]
+            team1, team2 = battle.get_team1(), battle.get_team2()
+
+        return team1, team2
+
+    def is_short(self):
+        active_players = self.get_active_players()
+        return len(active_players) < 2
+
+    def is_over(self):
+        active_players = self.get_active_players()
+        return len(active_players) > 8
 
     # バトル関連の操作
-    def prepare_battle(self):
-        active_players = self.get_active_players()
-        team1, team2 = self.split_players(active_players)
-        player2weapon = self.specify_weapons(active_players)
-        self.tmp_battle = Battle(
-            team1=team1, team2=team2, player2weapon=player2weapon)
-
-    def record_battle(self, winner):
-        self.tmp_battle.record_winner(winner)
-        self.calculate_wp(winner)
-
-        latest_battle = copy.deepcopy(self.tmp_battle)
-        self.battle_db.append(latest_battle)
-        self.tmp_battle = None
-
-    def get_prepared_battle(self):
-        return self.tmp_battle
+    def get_battle(self):
+        return self.battle
 
     def get_latest_battle(self):
         if len(self.battle_db) == 0:
@@ -136,9 +112,34 @@ class Manager:
         else:
             return self.battle_db[-1]
 
+    def prepare_battle(self):
+        active_players = self.get_active_players()
+        team1, team2 = self.split_players(active_players)
+        player2weapon = self.specify_weapons(active_players)
+        self.battle = Battle(
+            team1=team1, team2=team2, player2weapon=player2weapon)
+
+    def record_battle(self, winner):
+        self.battle.record_winner(winner)
+        self.calculate_wp(winner)
+
+        latest_battle = copy.deepcopy(self.battle)
+        self.battle_db.append(latest_battle)
+        self.battle = None
+
+    def specify_weapons(self, names):
+        weapon_option = self.rule.get_weapon_option()
+        player2weapon = dict()
+        for name in names:
+            if weapon_option == "-a":
+                player2weapon[name] = None
+            else:
+                player2weapon[name] = random.choice(WEAPON_LIST)
+        return player2weapon
+
     def calculate_wp(self, winner):
-        team1 = self.tmp_battle.get_team1()
-        team2 = self.tmp_battle.get_team2()
+        team1 = self.battle.get_team1()
+        team2 = self.battle.get_team2()
 
         if winner == 1:
             for name in team1:
@@ -153,40 +154,25 @@ class Manager:
                 self.player_db[name].win()
 
     def display_teams(self):
-        team1 = self.tmp_battle.get_team1()
-        team2 = self.tmp_battle.get_team2()
+        team1 = self.battle.get_team1()
+        team2 = self.battle.get_team2()
+        weapon_option = self.rule.get_weapon_option()
 
         msg = ""
         msg += "----------Team1----------\n"
         for name in team1:
-            if self.weapon_option == "-a":
+            if weapon_option == "-a":
                 msg += f"- {name}\n"
             else:
-                msg += f"- {name} ({self.tmp_battle.get_weapon(name)})\n"
+                msg += f"- {name} ({self.battle.get_weapon(name)})\n"
         msg += "----------Team2----------\n"
         for name in team2:
-            if self.weapon_option == "-a":
+            if weapon_option == "-a":
                 msg += f"- {name}\n"
             else:
-                msg += f"- {name} ({self.tmp_battle.get_weapon(name)})\n"
+                msg += f"- {name} ({self.battle.get_weapon(name)})\n"
         return msg
 
     # ルール関連の操作
-    def rule_determined(self):
-        return self.team_option and self.weapon_option
-
-    def set_team_option(self, option):
-        self.team_option = option
-
-    def set_weapon_option(self, option):
-        self.weapon_option = option
-
-    def weapon_specified(self):
-        return self.weapon_option == "-r"
-
-    def display_rule(self):
-        option2rule = {"-a": "指定なし", "-f": "固定", "-r": "ランダム", "-w": "勝率", None: " - "}
-        msg = ""
-        msg += "----------ルール----------\n"
-        msg += f"チーム分け:{option2rule[self.team_option]}, 武器:{option2rule[self.weapon_option]}\n"
-        return msg
+    def get_rule(self):
+        return self.rule
