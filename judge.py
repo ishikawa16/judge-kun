@@ -45,8 +45,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             return
 
         for name in set(args):
-            names = battle.get_players()
-            if name in names:
+            if battle.has_player(name):
                 battle.change_weapon(name)
 
         msg = self.manager.display_teams()

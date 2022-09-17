@@ -10,8 +10,8 @@ class Battle():
         self.player2weapon = player2weapon
         self.winner = None
 
-    def get_players(self):
-        return self.team1 + self.team2
+    def has_player(self, name):
+        return name in self.team1 or name in self.team2
 
     def get_team1(self):
         return self.team1
