@@ -38,7 +38,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        battle = self.manager.get_prepared_battle()
+        battle = self.manager.get_battle()
         rule = self.manager.get_rule()
         weapon_option = rule.get_weapon_option()
         if battle is None or weapon_option != "-r":
@@ -81,7 +81,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def team1(self, ctx):
         """チーム1の勝利報告
         """
-        battle = self.manager.get_prepared_battle()
+        battle = self.manager.get_battle()
         if battle is None:
             msg = "試合開始前です"
             await ctx.send(msg)
@@ -95,7 +95,7 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
     async def bravo(self, ctx):
         """チーム2の勝利報告
         """
-        battle = self.manager.get_prepared_battle()
+        battle = self.manager.get_battle()
         if battle is None:
             msg = "試合開始前です"
             await ctx.send(msg)

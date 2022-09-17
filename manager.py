@@ -15,7 +15,7 @@ class Manager:
     def __init__(self):
         self.player_db = dict()
         self.battle_db = deque()
-        self.tmp_battle = None
+        self.battle = None
         self.rule = Rule()
 
     # プレイヤー関連の操作
@@ -118,19 +118,19 @@ class Manager:
         active_players = self.get_active_players()
         team1, team2 = self.split_players(active_players)
         player2weapon = self.specify_weapons(active_players)
-        self.tmp_battle = Battle(
+        self.battle = Battle(
             team1=team1, team2=team2, player2weapon=player2weapon)
 
     def record_battle(self, winner):
-        self.tmp_battle.record_winner(winner)
+        self.battle.record_winner(winner)
         self.calculate_wp(winner)
 
-        latest_battle = copy.deepcopy(self.tmp_battle)
+        latest_battle = copy.deepcopy(self.battle)
         self.battle_db.append(latest_battle)
-        self.tmp_battle = None
+        self.battle = None
 
-    def get_prepared_battle(self):
-        return self.tmp_battle
+    def get_battle(self):
+        return self.battle
 
     def get_latest_battle(self):
         if len(self.battle_db) == 0:
@@ -139,8 +139,8 @@ class Manager:
             return self.battle_db[-1]
 
     def calculate_wp(self, winner):
-        team1 = self.tmp_battle.get_team1()
-        team2 = self.tmp_battle.get_team2()
+        team1 = self.battle.get_team1()
+        team2 = self.battle.get_team2()
 
         if winner == 1:
             for name in team1:
@@ -155,8 +155,8 @@ class Manager:
                 self.player_db[name].win()
 
     def display_teams(self):
-        team1 = self.tmp_battle.get_team1()
-        team2 = self.tmp_battle.get_team2()
+        team1 = self.battle.get_team1()
+        team2 = self.battle.get_team2()
         weapon_option = self.rule.get_weapon_option()
 
         msg = ""
@@ -165,13 +165,13 @@ class Manager:
             if weapon_option == "-a":
                 msg += f"- {name}\n"
             else:
-                msg += f"- {name} ({self.tmp_battle.get_weapon(name)})\n"
+                msg += f"- {name} ({self.battle.get_weapon(name)})\n"
         msg += "----------Team2----------\n"
         for name in team2:
             if weapon_option == "-a":
                 msg += f"- {name}\n"
             else:
-                msg += f"- {name} ({self.tmp_battle.get_weapon(name)})\n"
+                msg += f"- {name} ({self.battle.get_weapon(name)})\n"
         return msg
 
     # ルール関連の操作
