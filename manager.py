@@ -42,7 +42,7 @@ class Manager:
         return msg
 
     def display_ranking(self):
-        sorted_players = sorted(
+        sorted_player_db = sorted(
             self.player_db.items(),
             reverse=True,
             key=lambda x: x[1].get_wp()
@@ -50,7 +50,7 @@ class Manager:
 
         msg = ""
         msg += "----------Player----------\n"
-        for name, player in sorted_players:
+        for name, player in sorted_player_db:
             if player.is_rankable():
                 wp = player.get_wp()
                 if player.is_active():
