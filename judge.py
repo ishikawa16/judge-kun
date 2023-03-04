@@ -160,15 +160,6 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        team1 = battle.get_team1()
-        team2 = battle.get_team2()
-        for name in team1 + team2:
-            player = self.manager.get_player(name)
-            if not player.is_active():
-                msg = "前の試合の全参加者がアクティブである必要があります"
-                await ctx.send(msg)
-                return
-
         rule = self.manager.get_rule()
         rule.set_team_option("-f")
         msg = rule.display()
@@ -252,9 +243,12 @@ class JudgeCog(commands.Cog, name="プライベートマッチ関連"):
             await ctx.send(msg)
             return
 
-        self.manager.prepare_battle()
+        is_success = self.manager.prepare_battle()
 
-        msg = self.manager.display_teams()
+        if is_success:
+            msg = self.manager.display_teams()
+        else:
+            msg = "チーム分けに失敗しました"
         await ctx.send(msg)
 
     @commands.command()

@@ -91,9 +91,12 @@ class Manager:
         else:
             battle = self.battle_db[-1]
             team1, team2 = battle.get_team1(), battle.get_team2()
+            if set(names) != set(team1 + team2):
+                return False
 
         self.battle.set_team1(team1)
         self.battle.set_team2(team2)
+        return True
 
     def is_short(self):
         active_players = self.get_active_players()
@@ -115,8 +118,11 @@ class Manager:
 
     def prepare_battle(self):
         active_players = self.get_active_players()
-        self.split_players(active_players)
-        self.specify_weapons(active_players)
+        if self.split_players(active_players):
+            self.specify_weapons(active_players)
+            return True
+        else:
+            return False
 
     def record_battle(self, winner):
         self.battle.record_winner(winner)
